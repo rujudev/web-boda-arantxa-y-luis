@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'lato';
+    src: url('/lato-font/Lato-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'great-vibes';
+    src: url('/great-vibes-font/GreatVibes-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'playfair-display';
+    src: url('/playfair-display/PlayfairDisplay-VariableFont_wght.ttf');
+}
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-border: hsl(var(--border));
+
+  --color-ivory: hsl(var(--ivory));
+  --color-cream: hsl(var(--cream));
+  --color-sand: hsl(var(--sand));
+  --color-blush: hsl(var(--blush));
+  --color-dusty-rose: hsl(var(--dusty-rose));
+  --color-sage: hsl(var(--sage));
+  --color-sage-light: hsl(var(--sage-light));
+  --color-peony: hsl(var(--peony));
+  --color-neutral-50: hsl(var(--neutral-50));
+  --color-neutral-100: hsl(var(--neutral-100));
+  --color-neutral-200: hsl(var(--neutral-200));
+  --color-neutral-300: hsl(var(--neutral-300));
+  --color-neutral-400: hsl(var(--neutral-400));
+  --color-neutral-500: hsl(var(--neutral-500));
+  --color-neutral-600: hsl(var(--neutral-600));
+  --color-neutral-700: hsl(var(--neutral-700));
+  --color-neutral-800: hsl(var(--neutral-800));
+  --color-neutral-900: hsl(var(--neutral-900));
+
+  --font-body: "lato", sans-serif;
+  --font-script: "great-vibes", cursive;
+  --font-display: "playfair-display", serif;
+
+  --radius: 8px;
+}
+
+/* Variables base de diseño */
+:root {
+  --background: 0 0% 99%;
+  --foreground: 350 25% 25%;
+  --card: 30 35% 97%;
+  --card-foreground: 350 25% 25%;
+  --popover: 30 40% 98%;
+  --popover-foreground: 350 25% 25%;
+  --primary: 350 35% 55%;
+  --primary-foreground: 30 40% 98%;
+  --secondary: 350 25% 92%;
+  --secondary-foreground: 350 30% 35%;
+  --muted: 145 20% 90%;
+  --muted-foreground: 350 15% 45%;
+  --accent: 350 30% 88%;
+  --accent-foreground: 350 25% 30%;
+  --border: 350 15% 88%;
+
+  --ivory: 0 0% 99%;
+  --cream: 30 35% 96%;
+  --sand: 30 25% 92%;
+  --blush: 350 30% 92%;
+  --dusty-rose: 350 35% 55%;
+  --sage: 145 25% 70%;
+  --sage-light: 145 20% 90%;
+  --peony: 340 40% 75%;
+  --neutral-50: 30 40% 98%;
+  --neutral-100: 30 35% 96%;
+  --neutral-200: 30 25% 90%;
+  --neutral-300: 350 15% 82%;
+  --neutral-400: 350 12% 58%;
+  --neutral-500: 350 15% 42%;
+  --neutral-600: 350 18% 32%;
+  --neutral-700: 350 20% 25%;
+  --neutral-800: 350 22% 18%;
+  --neutral-900: 350 25% 12%;
+}
+
+/* Base global mínima */
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+}

@@ -6,9 +6,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "watch:css": "npx @tailwindcss/cli -i ./src/styles.css -o ./src/output.css --watch"
   },
   "dependencies": {
-    "astro": "^5.17.1"
+    "@tailwindcss/cli": "^4.2.1",
+    "astro": "^5.17.1",
+    "tailwindcss": "^4.2.1"
   }
 }

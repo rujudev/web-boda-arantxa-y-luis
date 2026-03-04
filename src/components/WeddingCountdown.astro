@@ -1,0 +1,91 @@
+<section id="countdown" class="py-20 px-6 md:py-28 md:px-12">
+    <div class="max-w-4xl mx-auto text-center">
+        <p class="text-primary text-[10px] font-body tracking-[0.4em] uppercase mb-4" style="opacity: 1; transform: none;">
+            Cuenta atrás
+        </p>
+        <h2 class="font-script text-4xl md:text-5xl text-foreground mb-16" style="opacity: 1; transform: none;">
+            Para el gran día
+        </h2>
+        <div class="grid grid-cols-4 gap-2 md:gap-8 max-w-2xl mx-auto" style="opacity: 1; transform: none;">
+            <div class="flex flex-col items-center" style="opacity: 1; transform: none;">
+                <div class="bg-card border border-border rounded-lg p-4 md:p-6 shadow-soft w-full">
+                    <span class="block font-display text-3xl md:text-5xl lg:text-6xl font-normal text-foreground tracking-tight tabular-nums" id="days"></span>
+                </div>
+                <span class="block mt-3 text-[9px] md:text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-body">Días</span>
+            </div>
+            <div class="flex flex-col items-center" style="opacity: 1; transform: none;">
+                <div class="bg-card border border-border rounded-lg p-4 md:p-6 shadow-soft w-full">
+                    <span class="block font-display text-3xl md:text-5xl lg:text-6xl font-normal text-foreground tracking-tight tabular-nums" id="hours"></span>
+                </div>
+                <span class="block mt-3 text-[9px] md:text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-body">Horas</span>
+            </div>
+            <div class="flex flex-col items-center" style="opacity: 1; transform: none;">
+                <div class="bg-card border border-border rounded-lg p-4 md:p-6 shadow-soft w-full">
+                    <span class="block font-display text-3xl md:text-5xl lg:text-6xl font-normal text-foreground tracking-tight tabular-nums" id="minutes"></span>
+                </div>
+                <span class="block mt-3 text-[9px] md:text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-body">Minutos</span>
+            </div>
+            <div class="flex flex-col items-center" style="opacity: 1; transform: none;">
+                <div class="bg-card border border-border rounded-lg p-4 md:p-6 shadow-soft w-full">
+                    <span class="block font-display text-3xl md:text-5xl lg:text-6xl font-normal text-foreground tracking-tight tabular-nums" id="seconds"></span>
+                </div>
+                <span class="block mt-3 text-[9px] md:text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-body">Segundos</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const getRemainingTime = (date: Date) => {
+        const now = new Date().getTime();
+        const remainingTime = date.getTime() - now;
+        const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+            (remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+        );
+        const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+        return { days, hours, minutes, seconds, remainingTime };
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const weddingDate = new Date('2026-07-11T17:00:00');
+        const remainingTime = getRemainingTime(weddingDate);
+        const daysElement = document.getElementById('days')!;
+        const hoursElement = document.getElementById('hours')!;
+        const minutesElement = document.getElementById('minutes')!;
+        const secondsElement = document.getElementById('seconds')!;
+        let interval: number;
+
+        if (remainingTime.remainingTime > 0) {
+            daysElement.textContent = String(remainingTime.days).padStart(2, '0');
+            hoursElement.textContent = String(remainingTime.hours).padStart(2, '0');
+            minutesElement.textContent = String(remainingTime.minutes).padStart(2, '0');
+            secondsElement.textContent = String(remainingTime.seconds).padStart(2, '0');
+
+            interval = setInterval(() => {
+                const newRemainingTime = getRemainingTime(weddingDate);
+
+                if (newRemainingTime.remainingTime <= 0) {
+                    clearInterval(interval);
+                    daysElement.textContent = '00';
+                    hoursElement.textContent = '00';
+                    minutesElement.textContent = '00';
+                    secondsElement.textContent = '00';
+                } else {
+                    daysElement.textContent = String(newRemainingTime.days).padStart(2, '0');
+                    hoursElement.textContent = String(newRemainingTime.hours).padStart(2, '0');
+                    minutesElement.textContent = String(newRemainingTime.minutes).padStart(2, '0');
+                    secondsElement.textContent = String(newRemainingTime.seconds).padStart(2, '0');
+                }
+            }, 1000);
+        } else {
+            daysElement.textContent = '00';
+            hoursElement.textContent = '00';
+            minutesElement.textContent = '00';
+            secondsElement.textContent = '00';
+        }
+    })
+
+</script>
