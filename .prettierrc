@@ -1,0 +1,10 @@
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "singleAttributePerLine": false,
+  "plugins": ["prettier-plugin-astro"],
+  "bracketSameLine": false,
+  "htmlWhitespaceSensitivity": "strict"
+}

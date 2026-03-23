@@ -3,26 +3,61 @@ import ArrowDown from "./ArrowDown.astro";
 ---
 
 <section class="flex items-center h-full relative">
-    <video autoplay muted loop class="w-full h-dvh object-cover 2xl:object-fill">
+    <video autoplay muted loop class="w-full h-dvh object-cover">
         <source src="src/assets/flower-background.mp4" type="video/mp4" />
         Tu navegador no soporta la etiqueta de video.
     </video>
 
     <div class="absolute inset-0 flex items-center justify-center">
-        <div class="flex flex-col items-center justify-center text-center px-8 max-w-sm mx-auto relative">
-            <p class="text-3xl md:text-4xl text-neutral-700 mb-6 font-[great-vibes] text-shadow-[rgba(60,40,30,0.3)_0.5px_0.5px_0px,rgba(60,40,30,0.1)_-0.3px_0.3px_0px]">Reserva de fecha</p>
-            <h1 class="text-2xl md:text-3xl tracking-[0.15em] text-neutral-800 uppercase mb-6 font-[playfair-display]">Arantxa & Luis</h1>
-            <p class="text-2xl md:text-3xl text-neutral-600 mb-8 font-[great-vibes] " >¡Nos casamos!</p>
-            <div class="flex items-center justify-center gap-4 text-neutral-700 mb-2 opacity-[1] transform-none" >
-                <span class="font-[playfair-display] text-sm md:text-base tracking-widest">JUNIO</span>
+        <div
+            class="flex flex-col items-center justify-center text-center px-8 max-w-sm mx-auto relative"
+        >
+            <p
+                class="text-3xl md:text-4xl text-neutral-700 mb-6 font-[great-vibes] text-shadow-[rgba(60,40,30,0.3)_0.5px_0.5px_0px,rgba(60,40,30,0.1)_-0.3px_0.3px_0px]"
+            >
+                Reserva de fecha
+            </p>
+            <h1
+                class="text-2xl md:text-3xl tracking-[0.15em] text-neutral-800 uppercase mb-6 font-[playfair-display]"
+            >
+                Arantxa & Luis
+            </h1>
+            <p
+                class="text-2xl md:text-3xl text-neutral-600 mb-8 font-[great-vibes]"
+            >
+                ¡Nos casamos!
+            </p>
+            <div
+                class="flex items-center justify-center gap-4 text-neutral-700 mb-2 opacity-[1] transform-none"
+            >
+                <span
+                    class="font-[playfair-display] text-sm md:text-base tracking-widest"
+                    >JUNIO</span
+                >
                 <span class="text-neutral-400">|</span>
-                <span class="font-[playfair-display] text-xl md:text-2xl">20</span>
+                <span class="font-[playfair-display] text-xl md:text-2xl"
+                    >20</span
+                >
                 <span class="text-neutral-400">|</span>
-                <span class="font-[playfair-display] text-sm md:text-base tracking-widest">SÁBADO</span>
+                <span
+                    class="font-[playfair-display] text-sm md:text-base tracking-widest"
+                    >SÁBADO</span
+                >
             </div>
-            <p class="font-[playfair-display] text-base md:text-lg text-neutral-600 tracking-widest" style="text-shadow: rgba(40, 30, 20, 0.3) 0.2px 0.2px 0.3px; opacity: 1;">2026</p>
-            <button class="absolute -bottom-20 flex flex-col items-center gap-2 text-foreground/50 hover:text-primary transition-colors cursor-pointer" style="opacity: 1;">
-                <span class="text-[10px] tracking-[0.3em] uppercase font-body font-light">Confirma asistencia</span>
+            <p
+                class="font-[playfair-display] text-base md:text-lg text-neutral-600 tracking-widest"
+                style="text-shadow: rgba(40, 30, 20, 0.3) 0.2px 0.2px 0.3px; opacity: 1;"
+            >
+                2026
+            </p>
+            <button
+                class="absolute -bottom-20 flex flex-col items-center gap-2 text-foreground/50 hover:text-primary transition-colors cursor-pointer"
+                style="opacity: 1;"
+            >
+                <span
+                    class="text-[10px] tracking-[0.3em] uppercase font-body font-light"
+                    >Confirma asistencia</span
+                >
                 <div class="animate-bounce">
                     <ArrowDown />
                 </div>

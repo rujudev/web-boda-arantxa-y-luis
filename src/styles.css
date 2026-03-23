@@ -1,18 +1,28 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+/* Preline UI */
+@source "../node_modules/preline/dist/*.js";
+@import '../node_modules/preline/variants.css';
+
+/* Plugins */
+@plugin "@tailwindcss/forms";
+
+/* Preline Themes */
+@import '../node_modules/preline/css/themes/cashmere.css';
 
 @font-face {
-    font-family: 'lato';
-    src: url('/lato-font/Lato-Regular.ttf');
+  font-family: 'lato';
+  src: url('/lato-font/Lato-Regular.ttf');
 }
 
 @font-face {
-    font-family: 'great-vibes';
-    src: url('/great-vibes-font/GreatVibes-Regular.ttf');
+  font-family: 'great-vibes';
+  src: url('/great-vibes-font/GreatVibes-Regular.ttf');
 }
 
 @font-face {
-    font-family: 'playfair-display';
-    src: url('/playfair-display/PlayfairDisplay-VariableFont_wght.ttf');
+  font-family: 'playfair-display';
+  src: url('/playfair-display/PlayfairDisplay-VariableFont_wght.ttf');
 }
 
 @theme {
@@ -51,9 +61,9 @@
   --color-neutral-800: hsl(var(--neutral-800));
   --color-neutral-900: hsl(var(--neutral-900));
 
-  --font-body: "lato", sans-serif;
-  --font-script: "great-vibes", cursive;
-  --font-display: "playfair-display", serif;
+  --font-body: 'lato', sans-serif;
+  --font-script: 'great-vibes', cursive;
+  --font-display: 'playfair-display', serif;
 
   --radius: 8px;
 }
@@ -76,6 +86,7 @@
   --accent-foreground: 350 25% 30%;
   --border: 350 15% 88%;
 
+  --teal: oklch(70.4% 0.14 182.503);
   --ivory: 0 0% 99%;
   --cream: 30 35% 96%;
   --sand: 30 25% 92%;
@@ -108,7 +119,12 @@
     font-family: var(--font-body);
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     font-weight: 400;
   }

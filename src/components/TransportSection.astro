@@ -1,0 +1,32 @@
+---
+import TimelineStep from "./TimelineStep.astro";
+import Goal from "./icons/Goal.astro";
+import MapPin from "./icons/MapPin.astro";
+---
+
+<section class="py-20 px-6 md:py-28 md:px-12 bg-ivory">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-16" style="opacity: 1; transform: none;">
+      <h2 class="font-script text-5xl md:text-6xl text-foreground mb-2">Autobús de ida</h2>
+      <p class="text-muted-foreground font-body tracking-wide">Habrá un autobús que hará el siguiente recorrido</p>
+    </div>
+    <div class="relative">
+      <div class="hidden md:flex md:flex-col md:items-center md:justify-center">
+        <div class="absolute left-0 right-0 h-px bg-border"></div>
+        <div class="grid grid-cols-3 gap-2 items-center justify-items-center w-full">
+          <TimelineStep hour="19:15" title="Sale de Novelda" Icon={MapPin} />
+          <TimelineStep hour="19:30" title="Sale de Monóvar" Icon={MapPin} />
+          <TimelineStep hour="19:45" title="Salones Juanjo" description="Llegada" Icon={Goal} />
+        </div>
+      </div>
+    </div>
+    <div class="md:hidden relative">
+      <div class="absolute left-6 top-0 bottom-0 w-px bg-border"></div>
+      <div class="space-y-6">
+        <TimelineStep isMobileView={true} hour="19:15" title="Sale de Novelda" Icon={MapPin} />
+        <TimelineStep isMobileView={true} hour="19:30" title="Sale de Monóvar" Icon={MapPin} />
+        <TimelineStep isMobileView={true} hour="19:45" title="Salones Juanjo" description="Llegada" Icon={Goal} />
+      </div>
+    </div>
+  </div>
+</section>

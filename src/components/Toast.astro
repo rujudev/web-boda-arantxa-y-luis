@@ -1,0 +1,92 @@
+<div class="w-full flex justify-center">
+  <div
+    data-toast
+    class="opacity-0 translate-y-2 pointer-events-none fixed bottom-2 z-10 transition-all duration-300 max-w-xs w-full text-sm bg-teal-500 text-white rounded-xl shadow-lg mx-auto"
+    role="alert"
+    tabindex="-1"
+  >
+    <div data-toast-message class="flex p-4">
+      <span data-toast-message-text>Hello, world! This is a toast message.</span
+      >
+
+      <div class="ms-auto">
+        <button
+          data-toast-close
+          type="button"
+          class="shrink-0 flex justify-center items-center size-5 text-white cursor-pointer opacity-50 hover:opacity-100 focus:outline-hidden"
+          aria-label="Close"
+        >
+          <span class="sr-only">Close</span>
+          <svg
+            class="shrink-0 size-4"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const toast = document.querySelector('[data-toast]');
+  const message = document.querySelector('[data-toast-message]');
+  const messageText = document.querySelector('[data-toast-message-text]');
+  const close = document.querySelector('[data-toast-close]');
+  const success = {
+    id: 'hs-toast-soft-color-teal-label',
+    classes: {
+      toast: 'bg-teal-500',
+    },
+  };
+
+  const error = {
+    id: 'hs-toast-soft-color-red-label',
+    classes: {
+      toast: 'bg-red-500',
+    },
+  };
+
+  let timeoutId;
+
+  function hideToast() {
+    toast?.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none');
+  }
+
+  function showToast(detail) {
+    if (!toast || !message || !messageText || !close) return;
+
+    messageText.textContent = detail.message ?? '';
+
+    const id = detail.type === 'success' ? success.id : error.id;
+    message.setAttribute('id', id);
+
+    toast.setAttribute('aria-labelledby', id);
+    const toastClasses =
+      detail?.type === 'success' ? success.classes.toast : error.classes.toast;
+
+    toast.classList.add(toastClasses);
+
+    console.log('Toast classes:', toast.classList);
+    toast.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+
+    clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(hideToast, 3000);
+  }
+
+  window.addEventListener('toast:show', (event) => {
+    showToast(event.detail);
+  });
+
+  close?.addEventListener('click', hideToast);
+</script>
