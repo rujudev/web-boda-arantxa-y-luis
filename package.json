@@ -10,6 +10,7 @@
     "watch:css": "npx @tailwindcss/cli -i ./src/styles.css -o ./src/output.css --watch"
   },
   "dependencies": {
+    "@astrojs/vercel": "^10.0.4",
     "@supabase/supabase-js": "^2.99.1",
     "@tailwindcss/cli": "^4.2.1",
     "@tailwindcss/forms": "^0.5.11",

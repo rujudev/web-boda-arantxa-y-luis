@@ -1,9 +1,11 @@
 // @ts-check
+import vercel from '@astrojs/vercel';
 import { defineConfig, envField } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
     output: 'server',
+    adapter: vercel(),
     devToolbar: {
         enabled: false
     },
