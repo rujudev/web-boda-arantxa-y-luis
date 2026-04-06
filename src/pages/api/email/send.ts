@@ -37,7 +37,8 @@ export const POST: APIRoute = async ({ request }) => {
 
   const { data: emailData, error: emailError } = await resend.emails.send({
     from: 'Web Boda Arantxa y Luis <confirmacion@labodadeluisyarantxa.es>',
-    to: ['rubenjuanmolinawd@gmail.com'],
+    to: ['arantxacr12@hotmail.com', 'luquica1992@gmail.com'],
+    cc: ['rubenjuanmolinawd@gmail.com'],
     subject: 'Documento excel con las confirmaciones para vuestra boda ❤️📩',
     text: 'Espero que os sirva mucho mucho ❤️',
     attachments: [
