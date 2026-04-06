@@ -1,6 +1,25 @@
 import { Howl } from 'howler';
 
 let sound = null;
+let isStarting = false;
+let hasMutedFallbackStarted = false;
+const CONSENT_KEY = 'music-consent-enabled';
+
+const getStoredConsent = () => {
+    try {
+        return localStorage.getItem(CONSENT_KEY) === 'true';
+    } catch {
+        return false;
+    }
+};
+
+const persistConsent = () => {
+    try {
+        localStorage.setItem(CONSENT_KEY, 'true');
+    } catch {
+        // Ignore storage failures (private mode, strict browser settings).
+    }
+};
 
 // DOM
 const musicCard = document.getElementById('music-card');
@@ -40,14 +59,63 @@ const getSound = () => {
     return sound;
 };
 
+const startPlayback = ({ muted = false } = {}) => {
+    const s = getSound();
+
+    if (s.playing()) {
+        if (s.mute() !== muted) {
+            s.mute(muted);
+        }
+        updateUI(s.playing());
+        return;
+    }
+
+    if (isStarting) {
+        updateUI(false);
+        return;
+    }
+
+    isStarting = true;
+    s.mute(muted);
+    const id = s.play();
+
+    if (id === null) {
+        isStarting = false;
+        updateUI(false);
+        return;
+    }
+
+    s.once('play', () => {
+        isStarting = false;
+        updateUI(true);
+    });
+
+    s.once('playerror', () => {
+        isStarting = false;
+        updateUI(false);
+    });
+
+    s.once('loaderror', () => {
+        isStarting = false;
+        updateUI(false);
+    });
+};
+
 // --------------------
 // CONTROLES
 // --------------------
 const playSound = () => {
     const s = getSound();
 
-    s.play();
-    updateUI(true);
+    if (s.playing() && s.mute()) {
+        s.mute(false);
+        persistConsent();
+        updateUI(true);
+        return;
+    }
+
+    startPlayback({ muted: false });
+    persistConsent();
 };
 
 const pauseSound = () => {
@@ -60,6 +128,13 @@ const pauseSound = () => {
 const toggleSound = () => {
     const s = getSound();
 
+    if (isStarting) return;
+
+    if (s.playing() && s.mute()) {
+        playSound();
+        return;
+    }
+
     if (s.playing()) {
         pauseSound();
     } else {
@@ -71,30 +146,34 @@ const toggleSound = () => {
 // AUTOPLAY INTELIGENTE
 // --------------------
 const tryAutoplay = () => {
-    const s = getSound();
-    if (s.playing()) {
-        updateUI(true);
-        return;
-    }
+    startPlayback({ muted: false });
+};
 
-    const id = s.play();
+const tryMutedAutoplay = () => {
+    if (hasMutedFallbackStarted) return;
 
-    if (id !== null) {
-        // Howler usa eventos en vez de promesas
-        s.once('play', () => {
-            updateUI(true);
-        });
-
-        s.once('playerror', () => {
-            updateUI(false);
-        });
-    }
+    hasMutedFallbackStarted = true;
+    startPlayback({ muted: true });
 };
 
 // --------------------
 // INIT
 // --------------------
-tryAutoplay();
+if (getStoredConsent()) {
+    tryAutoplay();
+} else {
+    const s = getSound();
+
+    s.once('playerror', () => {
+        tryMutedAutoplay();
+    });
+
+    s.once('loaderror', () => {
+        updateUI(false);
+    });
+
+    tryAutoplay();
+}
 
 // --------------------
 // EVENTOS UI
