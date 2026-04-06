@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs';
 
-type ConfirmRow = {
+export type ConfirmRow = {
   full_name?: string | null;
   alergias_resumen?: string | null;
   attending?: boolean | null;
@@ -10,50 +10,8 @@ type ConfirmRow = {
   message?: string | null;
 };
 
-const getMaxNameLength = (confirms: ConfirmRow[]) => {
-  let maxLength = 'Nombre'.length;
-
-  confirms.forEach((confirm: ConfirmRow) => {
-    const length = String(confirm.full_name || '').trim().length;
-    if (length > maxLength) {
-      maxLength = length;
-    }
-  });
-
-  return maxLength + 2;
-};
-
-const getMaxAllergenLength = (confirms: ConfirmRow[]) => {
-  let maxLength = 150;
-
-  confirms.forEach((confirm: ConfirmRow) => {
-    const allergens = confirm.alergias_resumen?.split(',') || [];
-    allergens.forEach((allergen) => {
-      const length = allergen.trim().length;
-      if (length > maxLength) {
-        maxLength = length;
-      }
-    });
-  });
-
-  return maxLength + 2;
-};
-
-const getMaxMessageLength = (confirms: ConfirmRow[]) => {
-  let maxLength = 100;
-
-  confirms.forEach((confirm: ConfirmRow) => {
-    const length = String(confirm.message || '').trim().length;
-    if (length > maxLength) {
-      maxLength = length;
-    }
-  });
-
-  return maxLength + 2;
-};
-
-export const createXlsx = async (confirms: ConfirmRow[]) => {
-  let xlsBuffer = Buffer.from('Un buffer vacío');
+export const createXlsx = async (confirms: ConfirmRow[] | undefined) => {
+  let xlsBuffer = Buffer.alloc(0);
 
   try {
     const workhook = new ExcelJS.Workbook();
@@ -63,7 +21,7 @@ export const createXlsx = async (confirms: ConfirmRow[]) => {
 
     let rowIndex = 2;
     let rowHeader = worksheet.getRow(rowIndex - 1);
-    rowHeader.values = [
+    const rowHeaderValues = [
       'Asistiré',
       'Nombre',
       'Email',
@@ -72,26 +30,9 @@ export const createXlsx = async (confirms: ConfirmRow[]) => {
       'Otras alergias',
       'Mensaje',
     ];
+
+    rowHeader.values = rowHeaderValues;
     rowHeader.font = { bold: true };
-
-    const namesMaxLength = getMaxNameLength(confirms);
-    const allergensMaxLength = getMaxAllergenLength(confirms);
-    const messageMaxLength = getMaxMessageLength(confirms);
-    const columnsWidths = [
-      10,
-      namesMaxLength,
-      25,
-      10,
-      allergensMaxLength,
-      20,
-      messageMaxLength,
-    ];
-
-    rowHeader.eachCell((cell, colNumber) => {
-      const columnIndex = colNumber - 1;
-      const columnWidth = columnsWidths[columnIndex];
-      worksheet.getColumn(colNumber).width = columnWidth;
-    });
 
     confirms?.forEach((confirm: ConfirmRow, index: number) => {
       const rowValue = worksheet.getRow(rowIndex + index);
@@ -104,8 +45,40 @@ export const createXlsx = async (confirms: ConfirmRow[]) => {
       rowValue.getCell('G').value = confirm.message;
     });
 
-    worksheet.eachRow((row, rowNumber) => {
-      row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+    // Fijamos algunas columnas y autoajustamos el resto por contenido.
+    const fixedWidthsByColumn: Record<number, number> = {
+      1: 10, // Asistiré
+      4: 10, // Invitados
+    };
+
+    worksheet.columns.forEach((column, index) => {
+      if (!column) return;
+
+      const colNumber = index + 1;
+      const fixedWidth = fixedWidthsByColumn[colNumber];
+
+      if (fixedWidth) {
+        column.width = fixedWidth;
+        return;
+      }
+
+      const headerText = String(rowHeaderValues[index] ?? '').trim();
+      let maxLength = headerText.length;
+
+      column.eachCell?.({ includeEmpty: true }, (cell) => {
+        const cellText = String(cell.value ?? '').trim();
+        if (cellText.length > maxLength) {
+          maxLength = cellText.length;
+        }
+      });
+
+      const minWidth = 12;
+      const maxWidth = 80;
+      column.width = Math.min(Math.max(maxLength + 2, minWidth), maxWidth);
+    });
+
+    worksheet.eachRow((row) => {
+      row.eachCell({ includeEmpty: true }, (cell) => {
         cell.border = {
           top: {
             style: 'thin', // You can use 'thin', 'medium', 'thick', or other valid styles
@@ -119,9 +92,10 @@ export const createXlsx = async (confirms: ConfirmRow[]) => {
       });
     });
 
-    xlsBuffer = await workhook.xlsx.writeBuffer();
+    const rawBuffer = await workhook.xlsx.writeBuffer();
+    xlsBuffer = Buffer.isBuffer(rawBuffer) ? rawBuffer : Buffer.from(rawBuffer);
   } catch (err) {
-    console.log({ err });
+    ({ err });
   }
 
   return xlsBuffer;

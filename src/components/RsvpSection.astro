@@ -3,7 +3,7 @@ import { actions } from 'astro:actions';
 
 const result = Astro.getActionResult(actions.confirmAssist);
 
-console.log(result?.error);
+result;
 ---
 
 <section id="rsvp" class="section-padding bg-ivory">
@@ -93,227 +93,229 @@ console.log(result?.error);
           </label>
         </div>
       </div>
-      <div>
-        <label
-          class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground font-medium"
-          for="guest_count">Número de invitados (incluyéndote)</label
-        ><input
-          type="number"
-          class="flex h-10 rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm mt-2 w-24 bg-background border-border text-foreground focus:border-primary"
-          id="guest_count"
-          name="guest_count"
-          min="1"
-          max="10"
-          value="1"
-        />
-      </div>
-      <div class="space-y-4">
-        <div class="flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-triangle-alert w-4 h-4 text-accent"
-          >
-            <path
-              d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
-            >
-            </path>
-            <path d="M12 9v4"></path>
-            <path d="M12 17h.01"></path>
-          </svg>
-          <label
-            class="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-base text-foreground font-medium"
-            >Alergias e intolerancias alimentarias
-          </label>
-        </div>
-        <p class="text-sm text-muted-foreground font-body">
-          Es muy importante para nosotros conocer cualquier restricción
-          alimentaria. Selecciona las que apliquen:
-        </p>
-        <div class="grid grid-cols-2 gap-3">
-          <label
-            class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
-          >
-            <input
-              type="checkbox"
-              id="allergy_gluten"
-              name="allergy_gluten"
-              class="peer sr-only"
-            />
-            <span
-              class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="h-3 w-3"
-              >
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </span>
-            <span>Sin gluten / Celíaco</span>
-          </label>
-          <label
-            class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
-          >
-            <input
-              type="checkbox"
-              id="allergy_lactose"
-              name="allergy_lactose"
-              class="peer sr-only"
-            />
-            <span
-              class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="h-3 w-3"
-              >
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </span>
-            <span>Sin lactosa</span>
-          </label>
-          <label
-            class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
-          >
-            <input
-              type="checkbox"
-              id="allergy_vegetarian"
-              name="allergy_vegetarian"
-              class="peer sr-only"
-            />
-            <span
-              class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="h-3 w-3"
-              >
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </span>
-            <span>Vegetariano</span>
-          </label>
-          <label
-            class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
-          >
-            <input
-              type="checkbox"
-              id="allergy_vegan"
-              name="allergy_vegan"
-              class="peer sr-only"
-            />
-            <span
-              class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="h-3 w-3"
-              >
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </span>
-            <span>Vegano</span>
-          </label>
-          <label
-            class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
-          >
-            <input
-              type="checkbox"
-              id="allergy_nuts"
-              name="allergy_nuts"
-              class="peer sr-only"
-            />
-            <span
-              class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="h-3 w-3"
-              >
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </span>
-            <span>Alergia a frutos secos</span>
-          </label>
-          <label
-            class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
-          >
-            <input
-              type="checkbox"
-              id="allergy_seafood"
-              name="allergy_seafood"
-              class="peer sr-only"
-            />
-            <span
-              class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="h-3 w-3"
-              >
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </span>
-            <span>Alergia a mariscos</span>
-          </label>
-        </div>
+      <fieldset id="attendance-details" class="space-y-6 disabled:opacity-60">
         <div>
           <label
-            class="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-foreground font-medium"
-            for="allergy_other">Otras alergias o restricciones:</label
+            class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground font-medium"
+            for="guest_count">Número de invitados (incluyéndote)</label
           ><input
-            class="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm mt-2 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
-            id="allergy_other"
-            placeholder="Ej: alergia al huevo, intolerancia a la fructosa..."
-            value=""
-            name="allergy_other"
+            type="number"
+            class="flex h-10 rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm mt-2 w-24 bg-background border-border text-foreground focus:border-primary"
+            id="guest_count"
+            name="guest_count"
+            min="1"
+            max="10"
+            value="1"
           />
         </div>
-      </div>
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-triangle-alert w-4 h-4 text-accent"
+            >
+              <path
+                d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+              >
+              </path>
+              <path d="M12 9v4"></path>
+              <path d="M12 17h.01"></path>
+            </svg>
+            <label
+              class="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-base text-foreground font-medium"
+              >Alergias e intolerancias alimentarias
+            </label>
+          </div>
+          <p class="text-sm text-muted-foreground font-body">
+            Es muy importante para nosotros conocer cualquier restricción
+            alimentaria. Selecciona las que apliquen:
+          </p>
+          <div class="grid grid-cols-2 gap-3">
+            <label
+              class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
+            >
+              <input
+                type="checkbox"
+                id="allergy_gluten"
+                name="allergy_gluten"
+                class="peer sr-only"
+              />
+              <span
+                class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-3 w-3"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              </span>
+              <span>Sin gluten / Celíaco</span>
+            </label>
+            <label
+              class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
+            >
+              <input
+                type="checkbox"
+                id="allergy_lactose"
+                name="allergy_lactose"
+                class="peer sr-only"
+              />
+              <span
+                class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-3 w-3"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              </span>
+              <span>Sin lactosa</span>
+            </label>
+            <label
+              class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
+            >
+              <input
+                type="checkbox"
+                id="allergy_vegetarian"
+                name="allergy_vegetarian"
+                class="peer sr-only"
+              />
+              <span
+                class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-3 w-3"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              </span>
+              <span>Vegetariano</span>
+            </label>
+            <label
+              class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
+            >
+              <input
+                type="checkbox"
+                id="allergy_vegan"
+                name="allergy_vegan"
+                class="peer sr-only"
+              />
+              <span
+                class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-3 w-3"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              </span>
+              <span>Vegano</span>
+            </label>
+            <label
+              class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
+            >
+              <input
+                type="checkbox"
+                id="allergy_nuts"
+                name="allergy_nuts"
+                class="peer sr-only"
+              />
+              <span
+                class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-3 w-3"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              </span>
+              <span>Alergia a frutos secos</span>
+            </label>
+            <label
+              class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
+            >
+              <input
+                type="checkbox"
+                id="allergy_seafood"
+                name="allergy_seafood"
+                class="peer sr-only"
+              />
+              <span
+                class="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-background text-transparent ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-3 w-3"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              </span>
+              <span>Alergia a mariscos</span>
+            </label>
+          </div>
+          <div>
+            <label
+              class="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-foreground font-medium"
+              for="allergy_other">Otras alergias o restricciones:</label
+            ><input
+              class="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm mt-2 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
+              id="allergy_other"
+              placeholder="Ej: alergia al huevo, intolerancia a la fructosa..."
+              value=""
+              name="allergy_other"
+            />
+          </div>
+        </div>
+      </fieldset>
       <div>
         <label
           class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground font-medium"
@@ -324,28 +326,41 @@ console.log(result?.error);
           name="message"
           placeholder="Escríbenos unas palabras..."
           rows="3"></textarea>
-      </div><button
-        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+      </div>
+      <button
+        id="rsvp-submit"
+        class="hover:cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
         type="submit"
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-send w-4 h-4"
-        >
-          <path
-            d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"
-          >
-          </path>
-          <path d="m21.854 2.147-10.94 10.939"></path>
-        </svg>Enviar confirmación</button
       >
+        <span id="submit-default" class="inline-flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-send w-4 h-4"
+          >
+            <path
+              d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"
+            >
+            </path>
+            <path d="m21.854 2.147-10.94 10.939"></path>
+          </svg>
+          Enviar confirmación
+        </span>
+        <span id="submit-loading" class="hidden items-center gap-2">
+          <span
+            class="animate-spin inline-block size-4 border-2 border-current border-t-transparent text-primary-foreground rounded-full"
+            role="status"
+            aria-label="Cargando"></span>
+          Enviando confirmación...
+        </span>
+      </button>
     </form>
   </div>
 </section>
@@ -354,13 +369,51 @@ console.log(result?.error);
   import { actions } from 'astro:actions';
 
   const form = document.querySelector('form');
+  const attendanceDetails = document.getElementById('attendance-details');
+  const attendingNo = document.getElementById('attending-no');
+  const attendingOptions = document.querySelectorAll('input[name="attending"]');
+  const submitButton = document.getElementById('rsvp-submit');
+  const submitDefault = document.getElementById('submit-default');
+  const submitLoading = document.getElementById('submit-loading');
+
+  const setSubmittingState = (isSubmitting: boolean) => {
+    if (!(submitButton instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    submitButton.disabled = isSubmitting;
+    submitButton.setAttribute('aria-busy', String(isSubmitting));
+
+    submitDefault?.classList.toggle('hidden!', isSubmitting);
+    submitLoading?.classList.toggle('hidden', !isSubmitting);
+    submitLoading?.classList.toggle('inline-flex', isSubmitting);
+  };
+
+  const toggleAttendanceDetails = () => {
+    if (
+      !(attendanceDetails instanceof HTMLFieldSetElement) ||
+      !(attendingNo instanceof HTMLInputElement)
+    ) {
+      return;
+    }
+
+    attendanceDetails.disabled = attendingNo.checked;
+  };
+
+  attendingOptions.forEach((option) => {
+    option.addEventListener('change', toggleAttendanceDetails);
+  });
+
+  toggleAttendanceDetails();
 
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
+    setSubmittingState(true);
 
     const { data, error } = await actions.confirmAssist(new FormData(form));
 
     if (error) {
+      setSubmittingState(false);
       window.dispatchEvent(
         new CustomEvent('toast:show', {
           detail: {
@@ -382,5 +435,7 @@ console.log(result?.error);
     );
 
     form.reset();
+    toggleAttendanceDetails();
+    setSubmittingState(false);
   });
 </script>

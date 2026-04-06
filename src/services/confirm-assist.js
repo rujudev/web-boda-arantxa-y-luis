@@ -8,7 +8,7 @@ export const confirmAssist = async (formData) => {
         const { data, error } = await supabaseClient.from('confirms').insert(successData);
 
         if (!error) {
-            console.log('Assist confirmed and stored in the database:', data);
+            ('Assist confirmed and stored in the database:', data);
         }
     }
 }
