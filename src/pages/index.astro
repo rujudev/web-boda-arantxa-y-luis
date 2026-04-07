@@ -1,4 +1,6 @@
 ---
+import Goal from '../components/icons/Goal.astro';
+import MapPin from '../components/icons/MapPin.astro';
 import RsvpSection from '../components/RsvpSection.astro';
 import Separator from '../components/Separator.astro';
 import Toast from '../components/Toast.astro';
@@ -19,7 +21,31 @@ export const prerender = false;
   <Separator />
   <WeddingTimeline />
   <Separator />
-  <TransportSection />
+  <TransportSection
+    title="Autobús de ida"
+    stops={[
+      { hour: '19:15', title: 'Sale de Monovar', Icon: MapPin },
+      { hour: '19:30', title: 'Sale de Novelda', Icon: MapPin },
+      {
+        hour: '19:45',
+        title: 'Salones Juanjo',
+        Icon: Goal,
+      },
+    ]}
+  />
+  <Separator />
+  <TransportSection
+    title="Autobús de vuelta"
+    stops={[
+      { hour: '03:30', title: 'Sale de Salones Juanjo', Icon: MapPin },
+      { hour: '03:45', title: 'Llega a Novelda', Icon: MapPin },
+      {
+        hour: '04:00',
+        title: 'Llega a Monovar',
+        Icon: Goal,
+      },
+    ]}
+  />
   <RsvpSection />
   <Toast />
 </Layout>
