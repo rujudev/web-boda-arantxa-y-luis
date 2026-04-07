@@ -30,7 +30,6 @@ const bars = document.querySelectorAll('.bar');
 // CONFIG
 // --------------------
 const TARGET_VOLUME = 0.5;
-const FADE_DURATION = 600; // ms
 
 // --------------------
 // UI
@@ -60,25 +59,6 @@ const syncFromAudio = () => {
 // --------------------
 // AUDIO HELPERS
 // --------------------
-const fadeVolume = (from, to, duration) => {
-    if (!(audio instanceof HTMLAudioElement)) return;
-
-    const start = performance.now();
-
-    const step = (now) => {
-        const progress = Math.min((now - start) / duration, 1);
-        const value = from + (to - from) * progress;
-
-        audio.volume = value;
-
-        if (progress < 1) {
-            requestAnimationFrame(step);
-        }
-    };
-
-    requestAnimationFrame(step);
-};
-
 const playMutedAutoplay = async () => {
     if (!(audio instanceof HTMLAudioElement)) return;
 
@@ -93,6 +73,7 @@ const enableSound = async () => {
     if (!(audio instanceof HTMLAudioElement)) return;
 
     audio.muted = false;
+    audio.volume = TARGET_VOLUME;
 
     try {
         await audio.play();
@@ -100,23 +81,15 @@ const enableSound = async () => {
         return;
     }
 
-    fadeVolume(0, TARGET_VOLUME, FADE_DURATION);
     persistConsent();
     syncFromAudio();
 };
 
-const pauseWithFade = () => {
+const pauseAudio = () => {
     if (!(audio instanceof HTMLAudioElement)) return;
 
-    const startVolume = audio.volume;
-
-    fadeVolume(startVolume, 0, FADE_DURATION);
-
-    setTimeout(() => {
-        audio.pause();
-        audio.volume = TARGET_VOLUME;
-        syncFromAudio();
-    }, FADE_DURATION);
+    audio.pause();
+    syncFromAudio();
 };
 
 // --------------------
@@ -125,29 +98,21 @@ const pauseWithFade = () => {
 const toggleSound = async () => {
     if (!(audio instanceof HTMLAudioElement)) return;
 
-    const isPlaying = !audio.paused && !audio.ended;
-
-    if (isPlaying) {
-        pauseWithFade();
+    // Si está muteado, desmutea primero
+    if (audio.muted) {
+        await enableSound();
         return;
     }
 
-    await enableSound();
-};
-
-// --------------------
-// UNLOCK GLOBAL (clave UX)
-// --------------------
-const unlockAudioOnce = async () => {
-    if (!audio) return;
-
-    if (audio.muted) {
-        await enableSound();
+    // Si no está muteado, toggle normal play/pause
+    const isPlaying = !audio.paused && !audio.ended;
+    if (isPlaying) {
+        pauseAudio();
+    } else {
+        await audio.play();
+        syncFromAudio();
     }
 };
-
-document.addEventListener('click', unlockAudioOnce, { once: true });
-document.addEventListener('keydown', unlockAudioOnce, { once: true });
 
 // --------------------
 // INIT
@@ -162,9 +127,7 @@ if (audio instanceof HTMLAudioElement) {
 
     // Si ya dio consentimiento → activar en cuanto pueda
     if (getStoredConsent()) {
-        setTimeout(() => {
-            enableSound();
-        }, 300);
+        enableSound();
     }
 
     syncFromAudio();
