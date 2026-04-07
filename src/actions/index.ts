@@ -98,13 +98,13 @@ export const server = {
 
       const { error } = await supabaseClient.from('confirms').insert(payload);
 
-      // const whatsappResponse = await fetch(`${HOST}/api/whatsapp/send`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ assistant: payload }),
-      // });
+      const whatsappResponse = await fetch(`${HOST}/api/whatsapp/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ assistant: payload }),
+      });
 
       const emailResponse = await fetch(`${HOST}/api/email/send`, {
         method: 'POST',
@@ -114,9 +114,9 @@ export const server = {
       });
 
       return {
-        success: !error && emailResponse.ok,
+        success: !error && emailResponse.ok && whatsappResponse.ok,
         message:
-          error && !emailResponse.ok
+          error && !emailResponse.ok && !whatsappResponse.ok
             ? 'Ha ocurrido un error al enviar la confirmación'
             : 'Confirmación enviada correctamente',
       };
