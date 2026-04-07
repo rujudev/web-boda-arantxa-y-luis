@@ -4,6 +4,8 @@ export type ConfirmRow = {
   full_name?: string | null;
   alergias_resumen?: string | null;
   attending?: boolean | null;
+  bus_required?: boolean | null;
+  bus_count?: number | null;
   email?: string | null;
   guest_count?: number | null;
   allergy_other?: string | null;
@@ -23,6 +25,8 @@ export const createXlsx = async (confirms: ConfirmRow[] | undefined) => {
     let rowHeader = worksheet.getRow(rowIndex - 1);
     const rowHeaderValues = [
       'Asistiré',
+      'Bus',
+      'Plazas bus',
       'Nombre',
       'Email',
       'Invitados',
@@ -37,18 +41,22 @@ export const createXlsx = async (confirms: ConfirmRow[] | undefined) => {
     confirms?.forEach((confirm: ConfirmRow, index: number) => {
       const rowValue = worksheet.getRow(rowIndex + index);
       rowValue.getCell('A').value = confirm.attending;
-      rowValue.getCell('B').value = confirm.full_name;
-      rowValue.getCell('C').value = confirm.email;
-      rowValue.getCell('D').value = confirm.guest_count;
-      rowValue.getCell('E').value = confirm.alergias_resumen;
-      rowValue.getCell('F').value = confirm.allergy_other;
-      rowValue.getCell('G').value = confirm.message;
+      rowValue.getCell('B').value = confirm.bus_required;
+      rowValue.getCell('C').value = confirm.bus_count;
+      rowValue.getCell('D').value = confirm.full_name;
+      rowValue.getCell('E').value = confirm.email;
+      rowValue.getCell('F').value = confirm.guest_count;
+      rowValue.getCell('G').value = confirm.alergias_resumen;
+      rowValue.getCell('H').value = confirm.allergy_other;
+      rowValue.getCell('I').value = confirm.message;
     });
 
     // Fijamos algunas columnas y autoajustamos el resto por contenido.
     const fixedWidthsByColumn: Record<number, number> = {
       1: 10, // Asistiré
-      4: 10, // Invitados
+      2: 10, // Bus
+      3: 12, // Plazas bus
+      6: 10, // Invitados
     };
 
     worksheet.columns.forEach((column, index) => {

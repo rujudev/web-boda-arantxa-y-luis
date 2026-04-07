@@ -109,6 +109,65 @@ result;
           />
         </div>
         <div class="space-y-4">
+          <div>
+            <label
+              class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground font-medium"
+              >¿Necesitaréis bus? *</label
+            >
+            <div class="flex gap-6 mt-3">
+              <label
+                class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
+              >
+                <input
+                  type="radio"
+                  id="bus-required-yes"
+                  name="bus_required"
+                  value="yes"
+                  class="peer sr-only"
+                />
+                <span
+                  class="h-4 w-4 shrink-0 rounded-full border border-primary bg-background ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:ring-2 peer-checked:ring-white peer-checked:ring-inset"
+                ></span>
+                <span>Sí, iremos en bus</span>
+              </label>
+              <label
+                class="flex items-center gap-2 font-medium text-sm cursor-pointer text-foreground"
+              >
+                <input
+                  type="radio"
+                  id="bus-required-no"
+                  name="bus_required"
+                  value="no"
+                  class="peer sr-only"
+                  checked
+                />
+                <span
+                  class="h-4 w-4 shrink-0 rounded-full border border-primary bg-background ring-offset-background transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-checked:bg-primary peer-checked:ring-2 peer-checked:ring-white peer-checked:ring-inset"
+                ></span>
+                <span>No necesitaremos bus</span>
+              </label>
+            </div>
+          </div>
+          <div id="bus-count-wrapper" class="hidden" hidden aria-hidden="true">
+            <label
+              class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground font-medium"
+              for="bus_count">¿Cuántas personas irán en bus?</label
+            ><input
+              type="number"
+              class="flex h-10 rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm mt-2 w-24 bg-background border-border text-foreground focus:border-primary"
+              id="bus_count"
+              name="bus_count"
+              min="1"
+              max="10"
+              value="1"
+              disabled
+            />
+            <p class="mt-2 text-sm text-muted-foreground font-body">
+              No puede ser mayor que el número total de asistentes.
+            </p>
+          </div>
+        </div>
+        <div class="space-y-4">
           <div class="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -366,17 +425,31 @@ result;
 </section>
 
 <script>
+  // @ts-nocheck
   import { actions } from 'astro:actions';
 
   const form = document.querySelector('form');
   const attendanceDetails = document.getElementById('attendance-details');
+  const attendingYes = document.getElementById('attending-yes');
   const attendingNo = document.getElementById('attending-no');
   const attendingOptions = document.querySelectorAll('input[name="attending"]');
+  const guestCount = document.getElementById('guest_count');
+  const busRequiredYes = document.getElementById('bus-required-yes');
+  const busRequiredNo = document.getElementById('bus-required-no');
+  const busOptions = document.querySelectorAll('input[name="bus_required"]');
+  const busCountWrapper = document.getElementById('bus-count-wrapper');
+  const busCount = document.getElementById('bus_count');
   const submitButton = document.getElementById('rsvp-submit');
   const submitDefault = document.getElementById('submit-default');
   const submitLoading = document.getElementById('submit-loading');
+  const fieldControls = form
+    ? Array.from(form.querySelectorAll('input, select, textarea'))
+    : [];
 
-  const setSubmittingState = (isSubmitting: boolean) => {
+  /**
+   * @param {boolean} isSubmitting
+   */
+  const setSubmittingState = (isSubmitting) => {
     if (!(submitButton instanceof HTMLButtonElement)) {
       return;
     }
@@ -400,25 +473,236 @@ result;
     attendanceDetails.disabled = attendingNo.checked;
   };
 
+  const syncBusCountInput = () => {
+    if (
+      !(guestCount instanceof HTMLInputElement) ||
+      !(busCount instanceof HTMLInputElement)
+    ) {
+      return;
+    }
+
+    const maxGuests = Number.parseInt(guestCount.value || '1', 10);
+    const safeMax = Number.isNaN(maxGuests) ? 1 : Math.max(maxGuests, 1);
+    busCount.max = String(safeMax);
+
+    const currentValue = Number.parseInt(busCount.value || '1', 10);
+    if (Number.isNaN(currentValue) || currentValue < 1) {
+      busCount.value = '1';
+      return;
+    }
+
+    if (currentValue > safeMax) {
+      busCount.value = String(safeMax);
+    }
+  };
+
+  const toggleBusDetails = () => {
+    const isAttending =
+      attendingYes instanceof HTMLInputElement && attendingYes.checked;
+    const needsBus =
+      busRequiredYes instanceof HTMLInputElement && busRequiredYes.checked;
+    const shouldShowBusCount = isAttending && needsBus;
+
+    if (busRequiredNo instanceof HTMLInputElement && !isAttending) {
+      busRequiredNo.checked = true;
+    }
+
+    if (busCountWrapper instanceof HTMLElement) {
+      busCountWrapper.hidden = !shouldShowBusCount;
+      busCountWrapper.setAttribute('aria-hidden', String(!shouldShowBusCount));
+      busCountWrapper.classList.toggle('hidden', !shouldShowBusCount);
+    }
+
+    if (busCount instanceof HTMLInputElement) {
+      busCount.disabled = !shouldShowBusCount;
+      busCount.required = shouldShowBusCount;
+
+      if (!shouldShowBusCount) {
+        busCount.value = '1';
+      }
+
+      syncBusCountInput();
+    }
+  };
+
+  const clearFieldErrors = () => {
+    fieldControls.forEach((control) => {
+      if (
+        !(control instanceof HTMLInputElement) &&
+        !(control instanceof HTMLSelectElement) &&
+        !(control instanceof HTMLTextAreaElement)
+      ) {
+        return;
+      }
+
+      control.setCustomValidity('');
+      control.classList.remove('border-red-500', 'focus:border-red-500');
+    });
+  };
+
+  /**
+   * @param {string} fieldName
+   * @param {string} message
+   */
+  const setFieldError = (fieldName, message) => {
+    if (!form || !fieldName || !message) return;
+
+    const controls = form.querySelectorAll(`[name="${fieldName}"]`);
+    if (!controls.length) return;
+
+    controls.forEach((control) => {
+      if (
+        !(control instanceof HTMLInputElement) &&
+        !(control instanceof HTMLSelectElement) &&
+        !(control instanceof HTMLTextAreaElement)
+      ) {
+        return;
+      }
+
+      control.setCustomValidity(message);
+      control.classList.add('border-red-500', 'focus:border-red-500');
+    });
+
+    const firstControl = controls[0];
+    if (
+      firstControl instanceof HTMLInputElement ||
+      firstControl instanceof HTMLSelectElement ||
+      firstControl instanceof HTMLTextAreaElement
+    ) {
+      firstControl.reportValidity();
+      firstControl.focus();
+    }
+  };
+
+  /**
+   * @param {unknown} actionError
+   * @returns {Record<string, string>}
+   */
+  const extractFieldErrors = (actionError) => {
+    /** @type {Record<string, string>} */
+    const fieldErrors = Object.create(null);
+    if (!actionError || typeof actionError !== 'object') return fieldErrors;
+
+    const actionErrorRecord = actionError;
+
+    const fieldsCandidate =
+      actionErrorRecord?.fields ??
+      actionErrorRecord?.data?.fields ??
+      actionErrorRecord?.zodError?.fieldErrors ??
+      actionErrorRecord?.data?.zodError?.fieldErrors;
+
+    if (fieldsCandidate && typeof fieldsCandidate === 'object') {
+      Object.entries(fieldsCandidate).forEach(([key, value]) => {
+        if (!value) return;
+        if (Array.isArray(value) && value.length > 0) {
+          fieldErrors[key] = String(value[0]);
+          return;
+        }
+
+        if (typeof value === 'string') {
+          fieldErrors[key] = value;
+        }
+      });
+    }
+
+    const issuesCandidate =
+      actionErrorRecord?.issues ??
+      actionErrorRecord?.data?.issues ??
+      actionErrorRecord?.zodError?.issues ??
+      actionErrorRecord?.data?.zodError?.issues;
+
+    if (Array.isArray(issuesCandidate)) {
+      issuesCandidate.forEach((issue) => {
+        const issuePath = issue?.path;
+        const path = Array.isArray(issuePath) ? issuePath[0] : undefined;
+        const message = issue?.message;
+
+        if (
+          typeof path === 'string' &&
+          typeof message === 'string' &&
+          !fieldErrors[path]
+        ) {
+          fieldErrors[path] = message;
+        }
+      });
+    }
+
+    return fieldErrors;
+  };
+
   attendingOptions.forEach((option) => {
-    option.addEventListener('change', toggleAttendanceDetails);
+    option.addEventListener('change', () => {
+      toggleAttendanceDetails();
+      toggleBusDetails();
+    });
+  });
+
+  busOptions.forEach((option) => {
+    option.addEventListener('change', toggleBusDetails);
+  });
+
+  guestCount?.addEventListener('input', syncBusCountInput);
+
+  fieldControls.forEach((control) => {
+    control.addEventListener('input', () => {
+      if (
+        !(control instanceof HTMLInputElement) &&
+        !(control instanceof HTMLSelectElement) &&
+        !(control instanceof HTMLTextAreaElement)
+      ) {
+        return;
+      }
+
+      control.setCustomValidity('');
+      control.classList.remove('border-red-500', 'focus:border-red-500');
+    });
+
+    control.addEventListener('change', () => {
+      if (
+        !(control instanceof HTMLInputElement) &&
+        !(control instanceof HTMLSelectElement) &&
+        !(control instanceof HTMLTextAreaElement)
+      ) {
+        return;
+      }
+
+      control.setCustomValidity('');
+      control.classList.remove('border-red-500', 'focus:border-red-500');
+    });
   });
 
   toggleAttendanceDetails();
+  syncBusCountInput();
+  toggleBusDetails();
 
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
+    clearFieldErrors();
     setSubmittingState(true);
 
     const { data, error } = await actions.confirmAssist(new FormData(form));
 
     if (error) {
       setSubmittingState(false);
+
+      const mappedErrors = extractFieldErrors(error);
+      const entries = Object.entries(mappedErrors);
+      if (entries.length > 0) {
+        const [firstField, firstMessage] = entries[0];
+        setFieldError(firstField, firstMessage);
+        entries.slice(1).forEach(([field, message]) => {
+          setFieldError(field, message);
+        });
+      }
+
       window.dispatchEvent(
         new CustomEvent('toast:show', {
           detail: {
             type: 'error',
-            message: 'No se pudo enviar la confirmación',
+            message:
+              entries.length > 0
+                ? 'Revisa los campos marcados en el formulario'
+                : 'No se pudo enviar la confirmación',
           },
         })
       );
@@ -436,6 +720,8 @@ result;
 
     form.reset();
     toggleAttendanceDetails();
+    syncBusCountInput();
+    toggleBusDetails();
     setSubmittingState(false);
   });
 </script>
