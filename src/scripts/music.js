@@ -1,5 +1,8 @@
 const CONSENT_KEY = 'music-consent-enabled';
 
+// --------------------
+// STORAGE
+// --------------------
 const getStoredConsent = () => {
     try {
         return localStorage.getItem(CONSENT_KEY) === 'true';
@@ -11,17 +14,23 @@ const getStoredConsent = () => {
 const persistConsent = () => {
     try {
         localStorage.setItem(CONSENT_KEY, 'true');
-    } catch {
-        // Ignore storage failures (private mode, strict browser settings).
-    }
+    } catch { }
 };
 
+// --------------------
 // DOM
+// --------------------
 const audio = document.getElementById('music');
 const musicCard = document.getElementById('music-card');
 const musicIconPlay = document.getElementById('music-icon-play');
 const musicIconPause = document.getElementById('music-icon-pause');
 const bars = document.querySelectorAll('.bar');
+
+// --------------------
+// CONFIG
+// --------------------
+const TARGET_VOLUME = 0.5;
+const FADE_DURATION = 600; // ms
 
 // --------------------
 // UI
@@ -41,32 +50,73 @@ const updateUI = (playing) => {
 
 const syncFromAudio = () => {
     if (!(audio instanceof HTMLAudioElement)) return;
-    updateUI(!audio.paused && !audio.ended);
+
+    const isPlaying = !audio.paused && !audio.ended;
+    const hasSound = !audio.muted && audio.volume > 0.01;
+
+    updateUI(isPlaying && hasSound);
 };
 
-const playAudio = async ({ muted = false } = {}) => {
-    if (!(audio instanceof HTMLAudioElement)) return false;
+// --------------------
+// AUDIO HELPERS
+// --------------------
+const fadeVolume = (from, to, duration) => {
+    if (!(audio instanceof HTMLAudioElement)) return;
 
-    audio.muted = muted;
+    const start = performance.now();
+
+    const step = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const value = from + (to - from) * progress;
+
+        audio.volume = value;
+
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        }
+    };
+
+    requestAnimationFrame(step);
+};
+
+const playMutedAutoplay = async () => {
+    if (!(audio instanceof HTMLAudioElement)) return;
 
     try {
+        audio.muted = true;
+        audio.volume = 0;
         await audio.play();
-        syncFromAudio();
-        return true;
-    } catch {
-        syncFromAudio();
-        return false;
-    }
+    } catch { }
 };
 
 const enableSound = async () => {
     if (!(audio instanceof HTMLAudioElement)) return;
 
     audio.muted = false;
-    const started = await playAudio({ muted: false });
-    if (started) {
-        persistConsent();
+
+    try {
+        await audio.play();
+    } catch {
+        return;
     }
+
+    fadeVolume(0, TARGET_VOLUME, FADE_DURATION);
+    persistConsent();
+    syncFromAudio();
+};
+
+const pauseWithFade = () => {
+    if (!(audio instanceof HTMLAudioElement)) return;
+
+    const startVolume = audio.volume;
+
+    fadeVolume(startVolume, 0, FADE_DURATION);
+
+    setTimeout(() => {
+        audio.pause();
+        audio.volume = TARGET_VOLUME;
+        syncFromAudio();
+    }, FADE_DURATION);
 };
 
 // --------------------
@@ -75,52 +125,46 @@ const enableSound = async () => {
 const toggleSound = async () => {
     if (!(audio instanceof HTMLAudioElement)) return;
 
-    if (!audio.paused && !audio.ended) {
-        if (audio.muted) {
-            await enableSound();
-            return;
-        }
+    const isPlaying = !audio.paused && !audio.ended;
 
-        audio.pause();
-        syncFromAudio();
+    if (isPlaying) {
+        pauseWithFade();
         return;
     }
 
-    if (getStoredConsent()) {
+    await enableSound();
+};
+
+// --------------------
+// UNLOCK GLOBAL (clave UX)
+// --------------------
+const unlockAudioOnce = async () => {
+    if (!audio) return;
+
+    if (audio.muted) {
         await enableSound();
-        return;
     }
-
-    await playAudio({ muted: false });
-    persistConsent();
 };
 
-// --------------------
-// AUTOPLAY INTELIGENTE
-// --------------------
-const tryAutoplay = () => {
-    return playAudio({ muted: false });
-};
-
-const tryMutedAutoplay = () => {
-    return playAudio({ muted: true });
-};
+document.addEventListener('click', unlockAudioOnce, { once: true });
+document.addEventListener('keydown', unlockAudioOnce, { once: true });
 
 // --------------------
 // INIT
 // --------------------
 if (audio instanceof HTMLAudioElement) {
-    audio.volume = 0.5;
     audio.addEventListener('play', syncFromAudio);
     audio.addEventListener('pause', syncFromAudio);
     audio.addEventListener('ended', syncFromAudio);
 
+    // 🔥 Autoplay silencioso SIEMPRE
+    playMutedAutoplay();
+
+    // Si ya dio consentimiento → activar en cuanto pueda
     if (getStoredConsent()) {
-        audio.muted = false;
-        void tryAutoplay();
-    } else {
-        audio.muted = true;
-        void tryMutedAutoplay();
+        setTimeout(() => {
+            enableSound();
+        }, 300);
     }
 
     syncFromAudio();
@@ -135,7 +179,7 @@ if (musicCard) {
     musicCard.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            void toggleSound();
+            toggleSound();
         }
     });
 }
