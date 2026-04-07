@@ -1,8 +1,3 @@
-import { Howl } from 'howler';
-
-let sound = null;
-let isStarting = false;
-let hasMutedFallbackStarted = false;
 const CONSENT_KEY = 'music-consent-enabled';
 
 const getStoredConsent = () => {
@@ -22,6 +17,7 @@ const persistConsent = () => {
 };
 
 // DOM
+const audio = document.getElementById('music');
 const musicCard = document.getElementById('music-card');
 const musicIconPlay = document.getElementById('music-icon-play');
 const musicIconPause = document.getElementById('music-icon-pause');
@@ -43,136 +39,91 @@ const updateUI = (playing) => {
     musicIconPause?.classList.toggle('hidden', !playing);
 };
 
-// --------------------
-// AUDIO
-// --------------------
-const getSound = () => {
-    if (sound) return sound;
-
-    sound = new Howl({
-        src: ['/audio/in_this_shirt.mp3'],
-        loop: true,
-        html5: true, // 👈 importante para evitar algunos bloqueos
-        volume: 0.5,
-    });
-
-    return sound;
+const syncFromAudio = () => {
+    if (!(audio instanceof HTMLAudioElement)) return;
+    updateUI(!audio.paused && !audio.ended);
 };
 
-const startPlayback = ({ muted = false } = {}) => {
-    const s = getSound();
+const playAudio = async ({ muted = false } = {}) => {
+    if (!(audio instanceof HTMLAudioElement)) return false;
 
-    if (s.playing()) {
-        if (s.mute() !== muted) {
-            s.mute(muted);
-        }
-        updateUI(s.playing());
-        return;
+    audio.muted = muted;
+
+    try {
+        await audio.play();
+        syncFromAudio();
+        return true;
+    } catch {
+        syncFromAudio();
+        return false;
     }
+};
 
-    if (isStarting) {
-        updateUI(false);
-        return;
+const enableSound = async () => {
+    if (!(audio instanceof HTMLAudioElement)) return;
+
+    audio.muted = false;
+    const started = await playAudio({ muted: false });
+    if (started) {
+        persistConsent();
     }
-
-    isStarting = true;
-    s.mute(muted);
-    const id = s.play();
-
-    if (id === null) {
-        isStarting = false;
-        updateUI(false);
-        return;
-    }
-
-    s.once('play', () => {
-        isStarting = false;
-        updateUI(true);
-    });
-
-    s.once('playerror', () => {
-        isStarting = false;
-        updateUI(false);
-    });
-
-    s.once('loaderror', () => {
-        isStarting = false;
-        updateUI(false);
-    });
 };
 
 // --------------------
 // CONTROLES
 // --------------------
-const playSound = () => {
-    const s = getSound();
+const toggleSound = async () => {
+    if (!(audio instanceof HTMLAudioElement)) return;
 
-    if (s.playing() && s.mute()) {
-        s.mute(false);
-        persistConsent();
-        updateUI(true);
+    if (!audio.paused && !audio.ended) {
+        if (audio.muted) {
+            await enableSound();
+            return;
+        }
+
+        audio.pause();
+        syncFromAudio();
         return;
     }
 
-    startPlayback({ muted: false });
+    if (getStoredConsent()) {
+        await enableSound();
+        return;
+    }
+
+    await playAudio({ muted: false });
     persistConsent();
-};
-
-const pauseSound = () => {
-    const s = getSound();
-
-    s.pause();
-    updateUI(false);
-};
-
-const toggleSound = () => {
-    const s = getSound();
-
-    if (isStarting) return;
-
-    if (s.playing() && s.mute()) {
-        playSound();
-        return;
-    }
-
-    if (s.playing()) {
-        pauseSound();
-    } else {
-        playSound();
-    }
 };
 
 // --------------------
 // AUTOPLAY INTELIGENTE
 // --------------------
 const tryAutoplay = () => {
-    startPlayback({ muted: false });
+    return playAudio({ muted: false });
 };
 
 const tryMutedAutoplay = () => {
-    if (hasMutedFallbackStarted) return;
-
-    hasMutedFallbackStarted = true;
-    startPlayback({ muted: true });
+    return playAudio({ muted: true });
 };
 
 // --------------------
 // INIT
 // --------------------
-if (getStoredConsent()) {
-    tryAutoplay();
-} else {
-    const s = getSound();
+if (audio instanceof HTMLAudioElement) {
+    audio.volume = 0.5;
+    audio.addEventListener('play', syncFromAudio);
+    audio.addEventListener('pause', syncFromAudio);
+    audio.addEventListener('ended', syncFromAudio);
 
-    s.once('playerror', () => {
-        tryMutedAutoplay();
-    });
+    if (getStoredConsent()) {
+        audio.muted = false;
+        void tryAutoplay();
+    } else {
+        audio.muted = true;
+        void tryMutedAutoplay();
+    }
 
-    s.once('loaderror', () => {
-        updateUI(false);
-    });
-
-    tryAutoplay();
+    syncFromAudio();
 }
 
 // --------------------
@@ -184,7 +135,7 @@ if (musicCard) {
     musicCard.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            toggleSound();
+            void toggleSound();
         }
     });
 }
