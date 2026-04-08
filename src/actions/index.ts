@@ -106,17 +106,10 @@ export const server = {
         body: JSON.stringify({ assistant: payload }),
       });
 
-      const emailResponse = await fetch(`${HOST}/api/email/send`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
       return {
-        success: !error && emailResponse.ok && whatsappResponse.ok,
+        success: !error && whatsappResponse.ok,
         message:
-          error && !emailResponse.ok && !whatsappResponse.ok
+          error && !whatsappResponse.ok
             ? 'Ha ocurrido un error al enviar la confirmación'
             : 'Confirmación enviada correctamente',
       };

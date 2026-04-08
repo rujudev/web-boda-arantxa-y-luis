@@ -1,10 +1,64 @@
 import type { APIRoute } from 'astro';
-import { RESEND_TOKEN } from 'astro:env/server';
+import { CRON_SECRET, RESEND_TOKEN } from 'astro:env/server';
 import { Resend } from 'resend';
 import { supabaseClient } from '../../../db/config';
 import { createXlsx, type ConfirmRow } from '../../../utils';
 
-export const POST: APIRoute = async ({ request }) => {
+const MADRID_TIMEZONE = 'Europe/Madrid';
+const CRON_TEST_MODE = process.env.CRON_TEST_MODE === 'true';
+const CRON_TEST_DATE = process.env.CRON_TEST_DATE;
+
+const isAuthorized = (request: Request) => {
+  if (!CRON_SECRET) {
+    return false;
+  }
+
+  return request.headers.get('authorization') === `Bearer ${CRON_SECRET}`;
+};
+
+const isSundayAt2359InMadrid = (date = new Date()) => {
+  const formatter = new Intl.DateTimeFormat('es-ES', {
+    timeZone: MADRID_TIMEZONE,
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(date);
+  const values = Object.fromEntries(
+    parts
+      .filter((part) => part.type !== 'literal')
+      .map((part) => [part.type, part.value.toLowerCase()])
+  );
+
+  return (
+    values.weekday === 'dom' && values.hour === '23' && values.minute === '59'
+  );
+};
+
+const getMadridDateKey = (date = new Date()) => {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: MADRID_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+};
+
+const isTestWindowActive = () => {
+  if (!CRON_TEST_MODE) {
+    return false;
+  }
+
+  if (!CRON_TEST_DATE) {
+    return true;
+  }
+
+  return getMadridDateKey() === CRON_TEST_DATE;
+};
+
+const sendWeeklyConfirmationEmail = async () => {
   if (!RESEND_TOKEN) {
     return new Response(
       JSON.stringify({ message: 'Token de Resend no configurado' }),
@@ -59,4 +113,40 @@ export const POST: APIRoute = async ({ request }) => {
   };
 
   return new Response(JSON.stringify(response));
+};
+
+export const GET: APIRoute = async ({ request }) => {
+  if (!isAuthorized(request)) {
+    return new Response(JSON.stringify({ message: 'No autorizado' }), {
+      status: 401,
+    });
+  }
+
+  if (isTestWindowActive()) {
+    return sendWeeklyConfirmationEmail();
+  }
+
+  if (!isSundayAt2359InMadrid()) {
+    return new Response(
+      JSON.stringify({
+        message: 'Cron omitido fuera de la ventana semanal de Europe/Madrid',
+        ok: true,
+      }),
+      {
+        status: 202,
+      }
+    );
+  }
+
+  return sendWeeklyConfirmationEmail();
+};
+
+export const POST: APIRoute = async ({ request }) => {
+  if (!isAuthorized(request)) {
+    return new Response(JSON.stringify({ message: 'No autorizado' }), {
+      status: 401,
+    });
+  }
+
+  return sendWeeklyConfirmationEmail();
 };

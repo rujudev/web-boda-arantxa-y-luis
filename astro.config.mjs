@@ -15,6 +15,7 @@ export default defineConfig({
             API_SECRET: envField.string({ context: 'server', access: 'secret', }),
             WASSENGER_TOKEN: envField.string({ context: 'server', access: 'secret', }),
             RESEND_TOKEN: envField.string({ context: 'server', access: 'secret', }),
+            CRON_SECRET: envField.string({ context: 'server', access: 'secret', }),
             HOST: envField.string({ context: 'client', access: 'public', }),
         }
     }
