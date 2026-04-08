@@ -5,8 +5,6 @@ import { supabaseClient } from '../../../db/config';
 import { createXlsx, type ConfirmRow } from '../../../utils';
 
 const MADRID_TIMEZONE = 'Europe/Madrid';
-const CRON_TEST_MODE = process.env.CRON_TEST_MODE === 'true';
-const CRON_TEST_DATE = process.env.CRON_TEST_DATE;
 
 const isAuthorized = (request: Request) => {
   if (!CRON_SECRET) {
@@ -35,27 +33,6 @@ const isSundayAt2359InMadrid = (date = new Date()) => {
   return (
     values.weekday === 'dom' && values.hour === '23' && values.minute === '59'
   );
-};
-
-const getMadridDateKey = (date = new Date()) => {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: MADRID_TIMEZONE,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(date);
-};
-
-const isTestWindowActive = () => {
-  if (!CRON_TEST_MODE) {
-    return false;
-  }
-
-  if (!CRON_TEST_DATE) {
-    return true;
-  }
-
-  return getMadridDateKey() === CRON_TEST_DATE;
 };
 
 const sendWeeklyConfirmationEmail = async () => {
@@ -120,10 +97,6 @@ export const GET: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ message: 'No autorizado' }), {
       status: 401,
     });
-  }
-
-  if (isTestWindowActive()) {
-    return sendWeeklyConfirmationEmail();
   }
 
   if (!isSundayAt2359InMadrid()) {
