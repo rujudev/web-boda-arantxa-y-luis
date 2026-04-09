@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
     ...options,
     body: JSON.stringify({
       to: '120363161174939335@g.us', // Confirmaciones boda Arantxa y Luis
-      text: `${assistant.full_name} ha confirmado su asistencia el día "${new Date().toLocaleDateString(
+      text: `${assistant.full_name} ha confirmado que ${assistant.attending ? 'SI' : 'NO'} asistirá el día "${new Date().toLocaleDateString(
         'es-ES',
         {
           year: 'numeric',
