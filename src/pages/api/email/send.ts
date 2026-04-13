@@ -33,7 +33,9 @@ const isMondayAtNoonInMadrid = (date = new Date()) => {
   const hour = Number(values.hour);
   const minute = Number(values.minute);
 
-  return values.weekday === 'lun' && hour === 12 && minute <= 5;
+  return (
+    values.weekday === 'lun' && hour === 12 && minute >= 10 && minute <= 15
+  );
 };
 
 const sendWeeklyConfirmationEmail = async () => {

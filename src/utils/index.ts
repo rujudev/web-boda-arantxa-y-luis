@@ -31,7 +31,6 @@ export const createXlsx = async (confirms: ConfirmRow[] | undefined) => {
       'Email',
       'Invitados',
       'Alergias',
-      'Otras alergias',
       'Mensaje',
     ];
 
@@ -47,8 +46,7 @@ export const createXlsx = async (confirms: ConfirmRow[] | undefined) => {
       rowValue.getCell('E').value = confirm.email;
       rowValue.getCell('F').value = confirm.guest_count;
       rowValue.getCell('G').value = confirm.alergias_resumen;
-      rowValue.getCell('H').value = confirm.allergy_other;
-      rowValue.getCell('I').value = confirm.message;
+      rowValue.getCell('H').value = confirm.message;
     });
 
     // Fijamos algunas columnas y autoajustamos el resto por contenido.
