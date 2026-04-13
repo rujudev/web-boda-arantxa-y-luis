@@ -14,7 +14,7 @@ const isAuthorized = (request: Request) => {
   return request.headers.get('authorization') === `Bearer ${CRON_SECRET}`;
 };
 
-const isSundayAt2359InMadrid = (date = new Date()) => {
+const isMondayAtNoonInMadrid = (date = new Date()) => {
   const formatter = new Intl.DateTimeFormat('es-ES', {
     timeZone: MADRID_TIMEZONE,
     weekday: 'short',
@@ -30,9 +30,10 @@ const isSundayAt2359InMadrid = (date = new Date()) => {
       .map((part) => [part.type, part.value.toLowerCase()])
   );
 
-  return (
-    values.weekday === 'dom' && values.hour === '23' && values.minute === '59'
-  );
+  const hour = Number(values.hour);
+  const minute = Number(values.minute);
+
+  return values.weekday === 'lun' && hour === 12 && minute <= 5;
 };
 
 const sendWeeklyConfirmationEmail = async () => {
@@ -99,7 +100,7 @@ export const GET: APIRoute = async ({ request }) => {
     });
   }
 
-  if (!isSundayAt2359InMadrid()) {
+  if (!isMondayAtNoonInMadrid()) {
     return new Response(
       JSON.stringify({
         message: 'Cron omitido fuera de la ventana semanal de Europe/Madrid',
