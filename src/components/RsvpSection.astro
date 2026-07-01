@@ -4,25 +4,73 @@ import { actions } from 'astro:actions';
 const result = Astro.getActionResult(actions.confirmAssist);
 
 result;
+
+const isRsvpClosed = true;
 ---
 
-<section id="rsvp" class="section-padding bg-ivory">
+<section id="rsvp" class="py-20 px-4 md:pt-28 md:pb-20 md:px-12 bg-ivory">
   <div class="max-w-xl mx-auto">
     <div class="text-center mb-12" style="opacity: 1; transform: none;">
       <h2 class="font-script text-5xl md:text-6xl text-foreground mb-2">
-        Confirma tu asistencia
+        {isRsvpClosed ? 'Gracias por confirmar' : 'Confirma tu asistencia'}
       </h2>
-      <p class="text-muted-foreground font-body tracking-wide"
-        >Esperamos contar contigo</p
-      >
+      <p class="text-muted-foreground font-body tracking-wide">
+        {
+          isRsvpClosed
+            ? 'Nos vemos muy pronto'
+            : 'Esperamos contar contigo'
+        }
+      </p>
     </div>
-    <form
-      class="bg-card/90 backdrop-blur-sm border border-border rounded-sm p-8 space-y-6 shadow-soft"
-      style="opacity: 1; transform: none;"
-      action={actions.confirmAssist}
-      method="POST"
-    >
-      <div>
+    {
+      isRsvpClosed ? (
+        <div class="bg-card/90 backdrop-blur-sm border border-border rounded-sm px-8 py-12 md:px-12 md:py-14 shadow-soft text-center">
+          <div
+            class="w-16 h-16 rounded-full bg-background border-2 border-primary/40 flex items-center justify-center mx-auto mb-6 shadow-soft"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-heart w-6 h-6 text-primary"
+            >
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            </svg>
+          </div>
+          <p class="text-foreground font-body text-lg leading-relaxed max-w-md mx-auto">
+            El plazo para confirmar asistencia ya se ha cerrado. Gracias de
+            corazón a todos los que habéis confirmado, ¡significa muchísimo
+            para nosotros!
+          </p>
+          <p
+            class="text-muted-foreground font-body leading-relaxed mt-3 max-w-md mx-auto"
+          >
+            Ya solo queda esperar a que llegue el gran día. Estamos deseando
+            disfrutarlo con todos vosotros.
+          </p>
+          <div class="flex items-center justify-center gap-4 mt-8">
+            <span class="h-px bg-primary/30 w-12"></span>
+            <span class="text-primary/60 text-base font-script">♥</span>
+            <span class="h-px bg-primary/30 w-12"></span>
+          </div>
+          <p class="font-script text-3xl md:text-4xl text-primary mt-6">
+            Arantxa & Luis
+          </p>
+        </div>
+      ) : (
+        <form
+          class="bg-card/90 backdrop-blur-sm border border-border rounded-sm p-8 space-y-6 shadow-soft"
+          style="opacity: 1; transform: none;"
+          action={actions.confirmAssist}
+          method="POST"
+        >
+          <div>
         <label
           class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground font-medium"
           for="full_name"
@@ -422,7 +470,9 @@ result;
           Enviando confirmación...
         </span>
       </button>
-    </form>
+        </form>
+      )
+    }
   </div>
 </section>
 
