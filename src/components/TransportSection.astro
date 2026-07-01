@@ -18,7 +18,7 @@ const { title, stops } = Astro.props;
       <div class="hidden md:flex md:flex-col md:items-center md:justify-center">
         <div class="absolute left-0 right-0 h-px bg-border"></div>
         <div
-          class="grid grid-cols-3 gap-2 items-center justify-items-center w-full"
+          class=`grid grid-cols-${stops.length} gap-2 items-center justify-items-center w-full`
         >
           {
             stops.map(({ hour, title, description, Icon }) => (

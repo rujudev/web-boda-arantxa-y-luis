@@ -24,12 +24,17 @@ export const prerender = false;
   <TransportSection
     title="Autobús de ida"
     stops={[
-      { hour: '19:15', title: 'Sale de Novelda', Icon: MapPin },
-      { hour: '19:30', title: 'Sale de Monóvar', Icon: MapPin },
       {
-        hour: '19:45',
-        title: 'Salones Juanjo',
-        Icon: Goal,
+        hour: '18:50',
+        title: 'Novelda',
+        description: 'Parada del Manila',
+        Icon: MapPin,
+      },
+      {
+        hour: '19:05',
+        title: 'Monóvar',
+        description: 'Parada del Salitre (a mitad de calle)',
+        Icon: MapPin,
       },
     ]}
   />
@@ -37,15 +42,20 @@ export const prerender = false;
   <TransportSection
     title="Autobús de vuelta"
     stops={[
-      { hour: '03:30', title: 'Sale de Salones Juanjo', Icon: MapPin },
-      { hour: '03:45', title: 'Llega a Monóvar', Icon: MapPin },
-      {
-        hour: '04:00',
-        title: 'Llega a Novelda',
-        Icon: Goal,
-      },
+      { hour: '04:10', title: 'Sale del restaurante', Icon: Goal },
+      { title: 'Monóvar', description: 'Primera parada', Icon: MapPin },
+      { title: 'Novelda', description: 'Segunda parada', Icon: MapPin },
     ]}
   />
+  <div class="px-6 pb-20 md:pb-28 -mt-4 bg-ivory text-center">
+    <p
+      class="text-muted-foreground font-body text-sm leading-relaxed max-w-md mx-auto"
+    >
+      Os pedimos que estéis en la parada con unos minutos de antelación para
+      que podamos salir puntuales.
+    </p>
+  </div>
+  <Separator />
   <RsvpSection />
   <Toast />
 </Layout>
